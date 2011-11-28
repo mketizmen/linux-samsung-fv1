@@ -91,4 +91,5 @@ MACHINE_START(RUT100, "Teltonika RUT100")
 	.init_irq	= gemini_init_irq,
 	.timer		= &rut1xx_timer,
 	.init_machine	= rut1xx_init,
+	.restart	= gemini_restart,
 MACHINE_END
