@@ -46,6 +46,8 @@
 #include <plat/s5p-time.h>
 #include <plat/backlight.h>
 #include <plat/regs-fb-v4.h>
+#include <plat/clock.h>
+#include <plat/ehci.h>
 
 /* Following are default values for UCON, ULCON and UFCON UART registers */
 #define SMDKV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
@@ -114,6 +116,8 @@ static struct samsung_keypad_platdata smdkv210_keypad_data __initdata = {
 	.rows		= 8,
 	.cols		= 8,
 };
+
+static struct s5p_ehci_platdata smdkv210_ehci_pdata;
 
 static struct resource smdkv210_dm9000_resources[] = {
 	[0] = {
@@ -227,6 +231,7 @@ static struct platform_device *smdkv210_devices[] __initdata = {
 	&s3c_device_wdt,
 	&s5pv210_device_ac97,
 	&s5pv210_device_iis0,
+	&s5p_device_ehci,
 	&s5pv210_device_spdif,
 	&samsung_asoc_dma,
 	&samsung_asoc_idma,
@@ -307,7 +312,11 @@ static void __init smdkv210_machine_init(void)
 
 	s3c_fb_set_platdata(&smdkv210_lcd0_pdata);
 
+	s5p_ehci_set_platdata(&smdkv210_ehci_pdata);
+
 	samsung_bl_set(&smdkv210_bl_gpio_info, &smdkv210_bl_data);
+
+	clk_xusbxti.rate = 24000000;
 
 	platform_add_devices(smdkv210_devices, ARRAY_SIZE(smdkv210_devices));
 }

@@ -60,6 +60,13 @@ config S5PV210_SETUP_FIMC
 	help
 	  Common setup code for the camera interfaces.
 
+config S5PV210_SETUP_USB_PHY
+	bool
+	help
+	  Common setup code for USB PHY controller
+
+
+
 menu "S5PC110 Machines"
 
 config MACH_AQUILA
@@ -143,12 +150,14 @@ config MACH_SMDKV210
 	select SAMSUNG_DEV_KEYPAD
 	select SAMSUNG_DEV_PWM
 	select SAMSUNG_DEV_TS
+	select S5P_DEV_USB_EHCI
 	select S5PV210_SETUP_FB_24BPP
 	select S5PV210_SETUP_I2C1
 	select S5PV210_SETUP_I2C2
 	select S5PV210_SETUP_IDE
 	select S5PV210_SETUP_KEYPAD
 	select S5PV210_SETUP_SDHCI
+	select S5PV210_SETUP_USB_PHY
 	help
 	  Machine support for Samsung SMDKV210
 
