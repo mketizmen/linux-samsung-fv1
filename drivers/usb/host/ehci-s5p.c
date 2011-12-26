@@ -135,6 +135,15 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
 	/* cache this readonly data; minimize chip reads */
 	ehci->hcs_params = readl(&ehci->caps->hcs_params);
 
+        //#ifdef CONFIG_CPU_S5PV210_EVT1
+	writel(0x000E0000, hcd->regs + 0x90);
+	writel(0x00400040, hcd->regs + 0x94);
+        //#else
+        //	writel(0x00600040, hcd->regs + 0x94);
+        //#endif
+
+
+
 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
 	if (err) {
 		dev_err(&pdev->dev, "Failed to add USB HCD\n");
