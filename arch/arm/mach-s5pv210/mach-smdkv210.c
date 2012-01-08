@@ -226,6 +226,7 @@ static struct platform_device *smdkv210_devices[] __initdata = {
 	&s3c_device_i2c0,
 	&s3c_device_i2c1,
 	&s3c_device_i2c2,
+	&s5p_device_i2c_hdmiphy,
 	&s3c_device_rtc,
 	&s3c_device_ts,
 	&s3c_device_wdt,
@@ -238,6 +239,8 @@ static struct platform_device *smdkv210_devices[] __initdata = {
 	&samsung_device_keypad,
 	&smdkv210_dm9000,
 	&smdkv210_lcd_lte480wv,
+	&s5p_device_hdmi,
+	&s5_device_mixer,
 };
 
 static void __init smdkv210_dm9000_init(void)
@@ -301,6 +304,7 @@ static void __init smdkv210_machine_init(void)
 	s3c_i2c0_set_platdata(NULL);
 	s3c_i2c1_set_platdata(NULL);
 	s3c_i2c2_set_platdata(NULL);
+	s5p_i2c_hdmiphy_set_platdata(NULL);
 	i2c_register_board_info(0, smdkv210_i2c_devs0,
 			ARRAY_SIZE(smdkv210_i2c_devs0));
 	i2c_register_board_info(1, smdkv210_i2c_devs1,
