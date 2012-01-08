@@ -100,7 +100,8 @@ static struct clk		*g3d_clock;
 static struct regulator		*g3d_pd_regulator;
 static PVRSRV_ERROR EnableSGXClocks(void)
 {
-	regulator_enable(g3d_pd_regulator);
+        if(g3d_pd_regulator)
+                regulator_enable(g3d_pd_regulator);
 	clk_enable(g3d_clock);
 
 	return PVRSRV_OK;
@@ -109,7 +110,8 @@ static PVRSRV_ERROR EnableSGXClocks(void)
 static PVRSRV_ERROR DisableSGXClocks(void)
 {
 	clk_disable(g3d_clock);
-	regulator_disable(g3d_pd_regulator);
+        if(g3d_pd_regulator)
+                regulator_disable(g3d_pd_regulator);
 
 	return PVRSRV_OK;
 }
@@ -176,14 +178,17 @@ PVRSRV_ERROR SysInitialise()
 	gpsSysData = &gsSysData;
 	OSMemSet(gpsSysData, 0, sizeof(SYS_DATA));
 
+        
 	pdev = gpsPVRLDMDev;
 	g3d_pd_regulator = regulator_get(&pdev->dev, "pd");
 	if (IS_ERR(g3d_pd_regulator)) {
-		printk("\nG3D failed to find g3d power domain\n");
-		return PVRSRV_ERROR_INIT_FAILURE;
+                g3d_pd_regulator = NULL;
+                // lack of a regular is OK, not all boards have one
+		//printk("\nG3D failed to find g3d power domain\n");
+		//return PVRSRV_ERROR_INIT_FAILURE;
 	}
 
-	g3d_clock = clk_get(&pdev->dev, "sclk");
+	g3d_clock = clk_get(&pdev->dev, "sclk_g3d");
 	if (IS_ERR(g3d_clock)) {
 		printk("\n3D failed to find g3d clock source-enable\n");
 		return PVRSRV_ERROR_INIT_FAILURE;
