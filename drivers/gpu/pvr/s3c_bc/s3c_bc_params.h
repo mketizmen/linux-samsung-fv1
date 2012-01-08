@@ -31,4 +31,6 @@
 #define S3C_BC_DEVICE_ID					0
 #define S3C_BC_DEVICE_BUFFER_COUNT			2								/* TODO: Modify this accordingly. */
 #define S3C_BC_DEVICE_PHYS_PAGE_SIZE		0x1000							/* 4KB */
-#define S3C_BC_DEVICE_PHYS_ADDR_START		((unsigned int)s5p_get_media_memory_bank(S5P_MDEV_TEXSTREAM,1)) 
+#define  S3C_BC_DEVICE_RESERVE_SIZE (3000 * SZ_1K)
+//#define S3C_BC_DEVICE_PHYS_ADDR_START		  ((unsigned int)s5p_get_media_memory_bank(S5P_MDEV_TEXSTREAM,1)) 
+

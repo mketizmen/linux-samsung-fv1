@@ -54,16 +54,20 @@ MODULE_SUPPORTED_DEVICE(DEVNAME);
 
 #if defined(LDM_PLATFORM) || defined(LDM_PCI)
 
+extern dma_addr_t s3c_bc_phys_addr_start;
+
 static struct class *psPvrClass;
 #endif
 
-int S3C_BC_Bridge(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg);
+extern dma_addr_t s3c_bc_phys_addr_start;
+
+long S3C_BC_Bridge(struct file *file, unsigned int cmd, unsigned long arg);
 int S3C_BC_mmap(struct file *filp, struct vm_area_struct *vma);
 static int AssignedMajorNumber;
 
 static struct file_operations S3C_BC_fops = {
-	ioctl:S3C_BC_Bridge,
-    	mmap:S3C_BC_mmap,	
+    	mmap:S3C_BC_mmap,
+	unlocked_ioctl:S3C_BC_Bridge,
 };
 
 
@@ -129,9 +133,10 @@ static int __init S3C_BC_ModInit(void)
 
 	psDev = device_create(psPvrClass, NULL, MKDEV(AssignedMajorNumber, 0),
 #if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26))
-						  NULL,
+                              NULL,
 #endif 
-						  DEVNAME);
+                              DEVNAME);
+        psDev-> coherent_dma_mask = DMA_BIT_MASK(32);
 	if (IS_ERR(psDev))
 	{
 		printk(KERN_ERR DRVNAME ": S3C_BC_ModInit: unable to create device (%ld)", PTR_ERR(psDev));
@@ -139,13 +144,22 @@ static int __init S3C_BC_ModInit(void)
 	}
 #endif
 
+
+        if(!dma_alloc_coherent(psDev, S3C_BC_DEVICE_RESERVE_SIZE,
+                               &s3c_bc_phys_addr_start, 0)) {
+                printk(KERN_ERR DRVNAME ": dma_alloc_coherent for BC device dma memory failed");
+                goto ExitDestroyClass;
+        }
+
 	if(S3C_BC_Register() != S3C_BC_OK)
 	{
 		printk (KERN_ERR DRVNAME ": S3C_BC_ModInit: can't init device\n");
 		goto ExitUnregister;
 	}
 	
-	//printk("s3c_bc: physical base addres = 0x%x\n", S3C_BC_DEVICE_PHYS_ADDR_START);
+
+
+	printk("s3c_bc: physical base addres = 0x%x\n", s3c_bc_phys_addr_start);
 
 #if defined(LMA)
 	pci_disable_device(psPCIDev);
@@ -213,7 +227,7 @@ S3C_BC_ERROR init_bc(void);
 static int init = 0;
 #endif
 
-int S3C_BC_Bridge(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg)
+long S3C_BC_Bridge(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	int err = -EFAULT;
 	int command = _IOC_NR(cmd);
@@ -235,7 +249,7 @@ int S3C_BC_Bridge(struct inode *inode, struct file *file, unsigned int cmd, unsi
 				init_bc();
 			}
 #endif
-			psBridge->outputparam = S3C_BC_DEVICE_PHYS_ADDR_START;
+			psBridge->outputparam = s3c_bc_phys_addr_start;
 			break;
 		}
 
@@ -269,7 +283,7 @@ int S3C_BC_mmap(struct file *filp, struct vm_area_struct *vma)
 	unsigned long size = vma->vm_end - vma->vm_start;
 	unsigned long page_frame_no;
 	/* Application passes the buffer index as page offset*/
-	unsigned long offset = (S3C_BC_DEVICE_PHYS_ADDR_START+(vma->vm_pgoff*size));
+	unsigned long offset = (s3c_bc_phys_addr_start+(vma->vm_pgoff*size));
 	
 
 //	printk("+S3C_BC_mmap  offset1 = 0x%x, offset2 = 0%x, size = 0x%x\n", (unsigned int)offset, (unsigned int)vma->vm_pgoff, (unsigned int)size);

@@ -35,6 +35,8 @@ IMG_UINT32 g_screen_stride, g_buffer_size = 0;
 
 static void *gpvAnchor = NULL;
 static PFN_BC_GET_PVRJTABLE pfnGetPVRJTable = IMG_NULL;
+dma_addr_t s3c_bc_phys_addr_start = 0;
+
 
 static S3C_BC_DEVINFO * GetAnchorPtr(void)
 {
@@ -204,7 +206,7 @@ S3C_BC_ERROR S3C_BC_Register(void)
 		psDevInfo->sBufferInfo.ui32Flags          = 0;
 		psDevInfo->sBufferInfo.ui32BufferCount    = S3C_BC_DEVICE_BUFFER_COUNT;
 
-		addr = S3C_BC_DEVICE_PHYS_ADDR_START;
+		addr = s3c_bc_phys_addr_start;
 		for(i = 0; i < S3C_BC_DEVICE_BUFFER_COUNT; i++, addr += g_buffer_size)
 		{
 			psDevInfo->sSystemBuffer[i].sSysAddr.uiAddr = (IMG_UINTPTR_T)addr;
