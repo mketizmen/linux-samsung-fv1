@@ -316,8 +316,6 @@ static void __init smdkv210_machine_init(void)
 
 	samsung_bl_set(&smdkv210_bl_gpio_info, &smdkv210_bl_data);
 
-	clk_xusbxti.rate = 24000000;
-
 	platform_add_devices(smdkv210_devices, ARRAY_SIZE(smdkv210_devices));
 }
 
