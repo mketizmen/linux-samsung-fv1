@@ -27,7 +27,7 @@
 #include <asm/setup.h>
 #include <asm/mach-types.h>
 
-#include <video/platform_lcd.h>
+#include <linux/wl12xx.h>
 
 #include <mach/map.h>
 #include <mach/regs-clock.h>
@@ -95,6 +95,26 @@ static struct s3c2410_uartcfg smdkv210_uartcfgs[] __initdata = {
 
 static struct s5p_ehci_platdata smdkv210_ehci_pdata;
 
+struct wl12xx_platform_data s5p_fv1_wlan_data __initdata = {
+        .irq = 0, // placeholder until we register a gpio, see below
+	.board_ref_clock = WL12XX_REFCLOCK_38, /* 38.4 MHz refclock */
+};
+
+static void fv1_wl12xx_configure(void) {
+	/* wl12xx GPIO IRQ EINT setup */
+        int gpio;
+
+	gpio = S5PV210_GPH2(5); // this is a guess based on debugfs on the android kernel :(
+	s5p_register_gpio_interrupt(gpio);
+	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
+	s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
+	s5p_fv1_wlan_data.irq = gpio_to_irq(gpio);
+
+	if (wl12xx_set_platform_data(&s5p_fv1_wlan_data))
+		pr_err("error setting wl12xx data\n");
+}
+
+
 static struct platform_device *smdkv210_devices[] __initdata = {
 	&s3c_device_adc,
 	&s3c_device_hsmmc0,
@@ -156,6 +176,8 @@ static void __init smdkv210_machine_init(void)
 			ARRAY_SIZE(smdkv210_i2c_devs2));
 
 	s5p_ehci_set_platdata(&smdkv210_ehci_pdata);
+
+	fv1_wl12xx_configure();
 
 	platform_add_devices(smdkv210_devices, ARRAY_SIZE(smdkv210_devices));
 }

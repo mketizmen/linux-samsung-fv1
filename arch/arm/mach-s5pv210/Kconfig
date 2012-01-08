@@ -184,6 +184,7 @@ config MACH_TORBRECK
 config MACH_FLEXIVIEWFV1
 	bool "Flexiview FV1"
 	select CPU_S5PV210
+	select S5P_GPIO_INT
 	select S3C_DEV_FB
 	select S3C_DEV_HSMMC
 	select S3C_DEV_HSMMC1
