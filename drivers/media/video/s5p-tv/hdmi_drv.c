@@ -256,7 +256,7 @@ static void hdmi_timing_apply(struct hdmi_device *hdev,
 	hdmi_writeb(hdev, HDMI_V_SYNC_GEN_3_1, core->v_sync_gen3[1]);
 	hdmi_writeb(hdev, HDMI_V_SYNC_GEN_3_2, core->v_sync_gen3[2]);
 	/* Timing generator registers */
-	hdmi_writeb(hdev, HDMI_TG_H_FSZ_L, tg->h_fsz_l);
+	hdmi_writeb(hdev, HDMI_TG_H_FSZ_L, tg->h_fsz_l); // <-- on second re-apply the system locks here
 	hdmi_writeb(hdev, HDMI_TG_H_FSZ_H, tg->h_fsz_h);
 	hdmi_writeb(hdev, HDMI_TG_HACT_ST_L, tg->hact_st_l);
 	hdmi_writeb(hdev, HDMI_TG_HACT_ST_H, tg->hact_st_h);
