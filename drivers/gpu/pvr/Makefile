@@ -43,8 +43,9 @@ ccflags-y += \
 	-DPVR_BUILD_DATE="" \
 	-DPVRSRV_MODNAME="\"pvrsrvkm\"" \
 	-Idrivers/gpu/pvr/sgx \
- 	-DPVRSRV_RESET_ON_HWTIMEOUT \
- 	-DPVRSRV_DEBUG_OS_MEMORY
+	-DPVRSRV_RESET_ON_HWTIMEOUT \
+	-DPVRSRV_DEBUG_OS_MEMORY \
+	-DAUTOCONF_INCLUDED
 
 ccflags-$(CONFIG_PVR_BUILD_RELEASE) += \
 	-DPVR_BUILD_TYPE="\"release\"" -DRELEASE
@@ -128,9 +129,10 @@ pvrsrvkm-$(CONFIG_ARCH_S5PV210) += \
 	s5pc110/sysconfig.o \
 	s5pc110/sysutils.o
 
-s3c_lcd-y := \
-	s3c_lcd/s3c_displayclass.o \
-	s3c_lcd/s3c_lcd.o
+
+# s3c_lcd-y := \
+# 	s3c_lcd/s3c_displayclass.o \
+# 	s3c_lcd/s3c_lcd.o
 
 s3c_bc-y := \
 	s3c_bc/s3c_bc.o \
@@ -138,7 +140,10 @@ s3c_bc-y := \
 
 obj-$(CONFIG_PVR_PDUMP) += dbgdrv
 
-obj-$(CONFIG_PVR_SGX) += pvrsrvkm.o
+obj-$(CONFIG_PVR_SGX) += pvrsrvkm.o s3c_bc.o
 
-obj-$(CONFIG_ARCH_S5PV210) += s3c_lcd.o
-obj-$(CONFIG_ARCH_S5PV210) += s3c_bc.o
+# I have NFI if anything here is necessary, no missing symbol errors yet...
+
+#obj-$(CONFIG_ARCH_S5PV210) += s3c_lcd.o
+#obj-$(CONFIG_ARCH_S5PV210) += s3c_bc.o
+
