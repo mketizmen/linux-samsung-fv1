@@ -129,10 +129,9 @@ pvrsrvkm-$(CONFIG_ARCH_S5PV210) += \
 	s5pc110/sysconfig.o \
 	s5pc110/sysutils.o
 
-
-# s3c_lcd-y := \
-# 	s3c_lcd/s3c_displayclass.o \
-# 	s3c_lcd/s3c_lcd.o
+s3c_lcd-y := \
+ 	s3c_lcd/s3c_displayclass.o \
+ 	s3c_lcd/s3c_lcd.o
 
 s3c_bc-y := \
 	s3c_bc/s3c_bc.o \
@@ -140,7 +139,7 @@ s3c_bc-y := \
 
 obj-$(CONFIG_PVR_PDUMP) += dbgdrv
 
-obj-$(CONFIG_PVR_SGX) += pvrsrvkm.o s3c_bc.o
+obj-$(CONFIG_PVR_SGX) += pvrsrvkm.o s3c_bc.o s3c_lcd.o
 
 # I have NFI if anything here is necessary, no missing symbol errors yet...
 
