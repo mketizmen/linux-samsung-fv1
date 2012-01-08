@@ -18,6 +18,7 @@
 #include <media/videobuf2-fb.h>
 #include <linux/export.h>
 #include <linux/mm.h>
+#include <linux/module.h>
 #include <linux/version.h>
 #include <linux/timer.h>
 #include <media/videobuf2-dma-contig.h>
