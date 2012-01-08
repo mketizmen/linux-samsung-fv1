@@ -24,8 +24,8 @@
  *
 ******************************************************************************/
 
-#include <plat/media.h>
-#include <mach/media.h>
+//#include <plat/media.h>
+//#include <mach/media.h>
 
 #define S3C_BC_DEVICE_NAME					"s3c_bc"
 #define S3C_BC_DEVICE_ID					0
