@@ -842,7 +842,7 @@ static S3C_BOOL InitDev(struct fb_info **s3c_fb_Info)
 	{
 		int res;
 
-		res = psLINFBInfo->fbops->fb_open(psLINFBInfo, 0);
+		res = psLINFBInfo->fbops->fb_open(psLINFBInfo, 1); // NB: lying to say we are "userspace" because fb2_fb_open rejects kernel open() calls!
 		if (res != 0)
 		{
 			printk("Couldn't open framebuffer: %d\n", res);
