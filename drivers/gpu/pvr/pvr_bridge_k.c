@@ -234,6 +234,7 @@ PVRSRV_BridgeDispatchKM(struct file *pFile, unsigned int unref__ ioctlCmd, unsig
 #endif
 
 	cmd = psBridgePackageKM->ui32BridgeID;
+        printk("%s cmd=0x%x\n", __FUNCTION__, cmd);
 
 #if defined(MODULE_TEST)
 	switch (cmd)
@@ -516,7 +517,9 @@ PVRSRV_BridgeDispatchKM(struct file *pFile, unsigned int unref__ ioctlCmd, unsig
 	}
 #endif 
 
+
 	err = BridgedDispatchKM(psPerProc, psBridgePackageKM);
+        printk("%s BridgedDispatchKM result =0x%x\n", __FUNCTION__, err);
 	if(err != PVRSRV_OK)
 		goto unlock_and_return;
 

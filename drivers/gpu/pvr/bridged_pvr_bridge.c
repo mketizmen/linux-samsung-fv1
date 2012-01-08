@@ -3805,8 +3805,12 @@ IMG_INT BridgedDispatchKM(PVRSRV_PER_PROCESS_DATA * psPerProc,
 					case PVRSRV_GET_BRIDGE_ID(PVRSRV_BRIDGE_INITSRV_DISCONNECT):
 						break;
 					default:
-						PVR_DPF((PVR_DBG_ERROR, "%s: Driver initialisation not completed yet.",
-								 __FUNCTION__));
+						PVR_DPF((PVR_DBG_ERROR, "%s: Driver initialisation not completed yet (req=0x%x _INITSRV_CONNECT=0x%lx INITSRV_DISCONNECT=0x%lx).",
+                                                         __FUNCTION__,
+                                                         ui32BridgeID,
+                                                         PVRSRV_GET_BRIDGE_ID(PVRSRV_BRIDGE_INITSRV_CONNECT),
+                                                         PVRSRV_GET_BRIDGE_ID(PVRSRV_BRIDGE_INITSRV_DISCONNECT)
+                                                         ));
 						goto return_fault;
 				}
 			}
