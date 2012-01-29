@@ -229,7 +229,7 @@ PVRSRV_ERROR PVRSRVRegisterDCDeviceKM (PVRSRV_DC_SRV2DISP_KMJTABLE *psFuncTable,
 
 	SysAcquireData(&psSysData);
 
-	
+	printk("PVRSRVRegisterDCDeviceKM\n");
 
 
 	
@@ -392,7 +392,7 @@ PVRSRV_ERROR PVRSRVRegisterBCDeviceKM (PVRSRV_BC_SRV2BUFFER_KMJTABLE *psFuncTabl
 	SysAcquireData(&psSysData);
 
 	
-
+        printk("PVRSRVRegisterBCDeviceKM\n");
 
 	
 	if(OSAllocMem( PVRSRV_OS_PAGEABLE_HEAP,

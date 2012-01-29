@@ -932,6 +932,8 @@ int s3c_displayclass_init(void)
 	}
 	num_of_backbuffer = num_of_fb - 1;
 	
+        printk("num_of_fb=%d, num_of_backbuffer=%d\n", num_of_fb, num_of_backbuffer);
+
 	if (g_psLCDInfo == NULL)
 	{
 		PFN_CMD_PROC	pfnCmdProcList[DC_S3C_LCD_COMMAND_COUNT];
@@ -1003,9 +1005,12 @@ int s3c_displayclass_init(void)
 
 		strncpy(g_psLCDInfo->sDisplayInfo.szDisplayName, "s3c_lcd", MAX_DISPLAY_NAME_SIZE);
 
+                printk("calling PVRSRVRegisterDCDevice\n");
+
 		if(g_psLCDInfo->sPVRJTable.pfnPVRSRVRegisterDCDevice	(&(g_psLCDInfo->sDCJTable),
 			(IMG_UINT32 *)(&(g_psLCDInfo->ui32DisplayID))) != PVRSRV_OK)
 		{
+                        printk("PVRSRVRegisterDCDevice failed\n");
 			return 1;
 		}
 
@@ -1027,6 +1032,8 @@ int s3c_displayclass_init(void)
 			return 1;
 		}
 	}
+
+        printk("s3c_displayclass_init success\n");
 
 	return 0;
 

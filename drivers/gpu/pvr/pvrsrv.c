@@ -144,6 +144,8 @@ static IMG_VOID PVRSRVEnumerateDevicesKM_ForEachVaCb(PVRSRV_DEVICE_NODE *psDevic
 	pui32DevCount = va_arg(va, IMG_UINT*);
 	ppsDevIdList = va_arg(va, PVRSRV_DEVICE_IDENTIFIER**);
 
+        printk("PVRSRVEnumerateDevicesKM_ForEachVaCb\n");
+
 	if (psDeviceNode->sDevId.eDeviceType != PVRSRV_DEVICE_TYPE_EXT)
 	{
 		*(*ppsDevIdList) = psDeviceNode->sDevId;
@@ -169,8 +171,8 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVEnumerateDevicesKM(IMG_UINT32 *pui32NumDevices,
 
 	SysAcquireData(&psSysData);
 
+        printk("PVRSRVEnumerateDevicesKM\n");
 	
-
 	for (i=0; i<PVRSRV_MAX_DEVICES; i++)
 	{
 		psDevIdList[i].eDeviceType = PVRSRV_DEVICE_TYPE_UNKNOWN;
@@ -188,6 +190,8 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVEnumerateDevicesKM(IMG_UINT32 *pui32NumDevices,
 									   pui32NumDevices,
 									   &psDevIdList);
 
+
+        printk("PVRSRVEnumerateDevicesKM Done numDevices=%d\n", *pui32NumDevices);
 
 	return PVRSRV_OK;
 }
