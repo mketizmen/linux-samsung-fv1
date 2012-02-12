@@ -47,6 +47,7 @@
 #include <plat/regs-fb-v4.h>
 #include <plat/clock.h>
 #include <plat/ehci.h>
+#include <plat/sdhci.h>
 
 /* Following are default values for UCON, ULCON and UFCON UART registers */
 #define SMDKV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
@@ -95,23 +96,37 @@ static struct s3c2410_uartcfg smdkv210_uartcfgs[] __initdata = {
 
 static struct s5p_ehci_platdata smdkv210_ehci_pdata;
 
-struct wl12xx_platform_data s5p_fv1_wlan_data __initdata = {
-        .irq = 0, // placeholder until we register a gpio, see below
-	.board_ref_clock = WL12XX_REFCLOCK_38, /* 38.4 MHz refclock */
+static struct wl12xx_platform_data s5p_fv1_wlan_data __initdata = {
+	.irq = 0, // placeholder until we register a gpio, see below
+	.board_ref_clock = WL12XX_REFCLOCK_38,
+	.board_tcxo_clock = WL12XX_TCXOCLOCK_38_4,
 };
 
-static void fv1_wl12xx_configure(void) {
-	/* wl12xx GPIO IRQ EINT setup */
-        int gpio;
+static void __init fv1_wl12xx_configure(void) {
+        /* wl12xx GPIO IRQ external pin setup */
+	int res;
 
-	gpio = S5PV210_GPH2(5); // this is a guess based on debugfs on the android kernel :(
-	s5p_register_gpio_interrupt(gpio);
-	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
-	s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
-	s5p_fv1_wlan_data.irq = gpio_to_irq(gpio);
+	/* enable (todo: move to plat data power on/off fn) */
+	gpio_request(S5PV210_GPH2(5), "GPH2");
+	gpio_direction_output(S5PV210_GPH2(5), 1);
+	gpio_set_value(S5PV210_GPH2(5), 1);
+	gpio_free(S5PV210_GPH2(5));
 
-	if (wl12xx_set_platform_data(&s5p_fv1_wlan_data))
-		pr_err("error setting wl12xx data\n");
+        /* this second gpio may not be needed for wifi */
+	gpio_request(S5PV210_GPH2(4), "GPH2");
+	gpio_direction_output(S5PV210_GPH2(4), 1);
+	gpio_set_value(S5PV210_GPH2(4), 1);
+	gpio_free(S5PV210_GPH2(4));
+
+	s5p_fv1_wlan_data.irq = s5p_register_gpio_interrupt(S5PV210_GPH2(6));
+	if(s5p_fv1_wlan_data.irq) {
+		s3c_gpio_cfgpin(S5PV210_GPH2(6), S3C_GPIO_SFN(0xf)); // set as ext int
+		s3c_gpio_setpull(S5PV210_GPH2(6), S3C_GPIO_PULL_NONE);
+
+		res = wl12xx_set_platform_data(&s5p_fv1_wlan_data);
+		if (res != 0)
+			pr_err("error setting wl12xx data %d\n", res);
+	}
 }
 
 
@@ -137,6 +152,14 @@ static struct platform_device *smdkv210_devices[] __initdata = {
 	&s5p_device_hdmi,
 	&s5p_device_mixer,
 };
+
+/* Wireless LAN WL1271 */
+static struct s3c_sdhci_platdata fv1_hsmmc1_data __initdata = {
+	.max_width		= 4,
+	.cd_type		= S3C_SDHCI_CD_PERMANENT,
+	/* ext_cd_{init,cleanup} callbacks will be added later */
+};
+
 
 static struct i2c_board_info smdkv210_i2c_devs0[] __initdata = {
 	{ I2C_BOARD_INFO("24c08", 0x50), },     /* Samsung S524AD0XD1 */
@@ -176,6 +199,8 @@ static void __init smdkv210_machine_init(void)
 			ARRAY_SIZE(smdkv210_i2c_devs2));
 
 	s5p_ehci_set_platdata(&smdkv210_ehci_pdata);
+
+	s3c_sdhci1_set_platdata(&fv1_hsmmc1_data);
 
 	fv1_wl12xx_configure();
 
