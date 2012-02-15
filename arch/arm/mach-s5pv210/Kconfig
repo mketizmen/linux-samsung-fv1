@@ -65,7 +65,10 @@ config S5PV210_SETUP_USB_PHY
 	help
 	  Common setup code for USB PHY controller
 
-
+config S5PV210_SETUP_SPI
+	bool
+	help
+	  Common setup code for SPI GPIO configurations.
 
 menu "S5PC110 Machines"
 
