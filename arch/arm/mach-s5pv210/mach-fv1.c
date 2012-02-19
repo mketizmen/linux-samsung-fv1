@@ -26,6 +26,7 @@
 #include <asm/setup.h>
 #include <asm/mach-types.h>
 
+#include <asm/hardware/vic.h>
 #include <linux/wl12xx.h>
 
 #include <mach/map.h>
@@ -211,7 +212,9 @@ MACHINE_START(SMDKV210, "Flexiview FV1")
 	/* Maintainer: Angus Gratton <gus@projectgus.com> */
 	.atag_offset	= 0x100,
 	.init_irq	= s5pv210_init_irq,
+	.handle_irq	= vic_handle_irq,
 	.map_io		= smdkv210_map_io,
 	.init_machine	= smdkv210_machine_init,
 	.timer		= &s5p_timer,
+	.restart	= s5pv210_restart,
 MACHINE_END
