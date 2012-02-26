@@ -20,6 +20,7 @@
 #include <linux/fb.h>
 #include <linux/gpio.h>
 #include <linux/delay.h>
+#include <linux/mmc/host.h>
 
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
@@ -156,9 +157,25 @@ static struct platform_device *fv1_devices[] __initdata = {
 
 /* Wireless LAN WL1271 */
 static struct s3c_sdhci_platdata fv1_hsmmc1_data __initdata = {
-	.max_width		= 4,
-	.cd_type		= S3C_SDHCI_CD_PERMANENT,
+	.max_width	= 4,
+	.cd_type	= S3C_SDHCI_CD_PERMANENT,
+	.host_caps	= (MMC_CAP_4_BIT_DATA |
+			   MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED),
+	.clk_type	= S3C_SDHCI_CLK_DIV_INTERNAL,
 	/* ext_cd_{init,cleanup} callbacks will be added later */
+};
+
+/* External SD slot */
+#define FV1_EXT_FLASH_CD	S5PV210_GPG2(2)
+static struct s3c_sdhci_platdata fv1_hsmmc2_data __initdata = {
+	.max_width	= 4,
+	.host_caps	= (MMC_CAP_4_BIT_DATA |
+			   MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED),
+	.clk_type	= S3C_SDHCI_CLK_DIV_INTERNAL,
+	.cd_type		= S3C_SDHCI_CD_GPIO,
+        .cfg_gpio               = s5pv210_setup_sdhci2_cfg_gpio,
+	.ext_cd_gpio		= FV1_EXT_FLASH_CD,
+	.ext_cd_gpio_invert	= 1,
 };
 
 
@@ -201,7 +218,9 @@ static void __init fv1_machine_init(void)
 
 	s5p_ehci_set_platdata(&fv1_ehci_pdata);
 
+        s3c_sdhci0_set_platdata(&s3c_hsmmc0_def_platdata);
 	s3c_sdhci1_set_platdata(&fv1_hsmmc1_data);
+	s3c_sdhci2_set_platdata(&fv1_hsmmc2_data);
 
 	fv1_wl12xx_configure();
 
